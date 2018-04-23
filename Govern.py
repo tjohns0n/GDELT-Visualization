@@ -1,8 +1,10 @@
 from pyspark import SparkConf, SparkContext
+from pyspark.sql import SQLContext
+from pyspark.sql.functions import input_file_name 
 import sys
 
 APP_NAME = 'TEST'
-NAME_NODE_HOST = 'hdfs://harrisburg:49110'
+NAME_NODE_HOST = 'hdfs://dover:30221'
 COUNTRY_CODES = '/cs455/country_codes.csv'
 
 INDEXES = {
@@ -41,12 +43,20 @@ def retrieve_actors(file_rdd, codes):
 
 def pull_data(sc, in_path, out_path):
     codes = load_codes(sc)
-    file = sc.textFile(in_path)
+    #file = sc.textFile(in_path)
 
+    sql_context = SQLContext(sc)
+    
+    file = (sql_context.read.text(in_path) 
+        .select("value", input_file_name()).rdd
+        .map(lambda x: x[0] + "\t" + x[1]))
+
+    print("\n\n\n\n\n\n\n\n")
+    print(file.first)
     composite = retrieve_actors(file, codes)
 
     sums = composite.reduceByKey(lambda x, y: (x[0]+y[0], x[1]+y[1]))
-    means = sums.mapValues(lambda x: x[0]/x[1])
+    means = sums.mapValues(lambda x: x[1]/x[0])
     means.saveAsTextFile(out_path)
 
 
