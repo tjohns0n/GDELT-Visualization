@@ -89,9 +89,9 @@ def graph_country(country_data):
     last_day = datetime.strptime(str(last_day), '%Y%m%d').strftime('%Y-%m-%d')
 
     line_graph.plot(date, mean_by_date)
-    line_graph.title(country_data[0] + " average tone, " + first_day)
-    line_graph.xlabel('Day')
-    line_graph.ylabel('Mean Tone')
+    line_graph.set_title(country_data[0] + " average tone, " + first_day)
+    line_graph.set_xlabel('Day')
+    line_graph.set_ylabel('Mean Tone')
     #TODO: move to HDFS
     image.savefig(country_data[0] + '-' + first_day + 'to' + last_day + '.png') 
     plt.close(image)
