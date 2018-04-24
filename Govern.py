@@ -79,7 +79,7 @@ def generate_graphs(mean_data, out_path):
     for country in country_data:
         graph_country(country)
 
-    print(world_data)
+    graph_choropleth(world_data)
 
 
 def graph_country(country_data):
@@ -105,8 +105,10 @@ def graph_country(country_data):
     plt.close(image)
 
 
-#def graph_choropleth(mean_by_country):
-
+def graph_choropleth(mean_by_country):
+    country_map = geopandas.read_file(shapefile)[['ADM0_A3', 'geometry']].to_crs('+proj=robin')
+    merged_data = country_map.merge(mean_by_country, left_on='ADM0_A3', right_on='0')
+    print(merged_data)
 
 
 def main():
