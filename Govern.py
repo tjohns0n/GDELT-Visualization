@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext
 from pyspark.sql.functions import input_file_name 
@@ -10,7 +13,8 @@ COUNTRY_CODES = '/cs455/country_codes.csv'
 INDEXES = {
     'ACTOR1': 5,
     'ACTOR2': 15,
-    'TONE': 34
+    'TONE': 34,
+    'FILE': 58
 }
 
 def clear_directory(sc, outPath):
@@ -38,7 +42,7 @@ def retrieve_actors(file_rdd, codes):
     columns = file_rdd.map(lambda x: x.split('\t')).filter(
         lambda x: (x[INDEXES['ACTOR1']][0:3] == actor) and (x[INDEXES['ACTOR2']][0:3] in codes)
     )
-    return columns.map(lambda x: (x[INDEXES['ACTOR2']][0:3], (1, float(x[INDEXES['TONE']]))))
+    return columns.map(lambda x: ((x[INDEXES['ACTOR2']][0:3], x[INDEXES['FILE']]), (1, float(x[INDEXES['TONE']]))))
 
 
 def pull_data(sc, in_path, out_path):
@@ -49,15 +53,37 @@ def pull_data(sc, in_path, out_path):
     
     file = (sql_context.read.text(in_path) 
         .select("value", input_file_name()).rdd
-        .map(lambda x: x[0] + "\t" + x[1]))
+        .map(lambda x: x[0] + "\t" + x[1][x[1].rfind('/') + 1:x[1].rfind('.export')]))
 
-    print("\n\n\n\n\n\n\n\n")
-    print(file.first)
     composite = retrieve_actors(file, codes)
 
     sums = composite.reduceByKey(lambda x, y: (x[0]+y[0], x[1]+y[1]))
     means = sums.mapValues(lambda x: x[1]/x[0])
-    means.saveAsTextFile(out_path)
+    return means #means.saveAsTextFile(out_path)
+
+
+def graph_by_country(sc, mean_data, out_path):    
+    axes = mean_data.map(lambda x: (x[0][0], (int(x[0][1]), x[1]))).groupByKey().collect()
+    for axis in axes:
+        graph_country(axis)
+
+
+def graph_country(country_data):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    
+    axes = list(country_data[1])
+    axes = sorted(axes)
+    
+    axes = zip(*axes)
+    x_axis = axes[0]
+    y_axis = axes[1]
+
+    print(x_axis)
+
+    ax.plot(x_axis, y_axis)
+    fig.savefig(country_data[0] + '-' + str(x_axis[0]) + '-' + str(x_axis[-1]) + '.png') 
+    #fig.close()
 
 
 def main():
@@ -71,7 +97,8 @@ def main():
     out_path = sys.argv[3]
     clear_directory(sc, out_path)
 
-    pull_data(sc, in_path, out_path)
+    data = pull_data(sc, in_path, out_path)
+    graph_by_country(sc, data, out_path)
 
 
 if __name__ == '__main__':
