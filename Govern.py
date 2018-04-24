@@ -3,6 +3,8 @@ from datetime import datetime
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import pandas as pd
+import geopandas
 
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext
@@ -65,13 +67,17 @@ def pull_data(sc, in_path, out_path):
     return means
 
 
-def graph_by_country(mean_data, out_path): 
+def generate_graphs(mean_data, out_path): 
     country_data = (mean_data.map(lambda x: (x[0][0], (int(x[0][1]), x[1])))
         .groupByKey()
         .collect())
 
     for country in country_data:
         graph_country(country)
+
+    world_data = (country_data.mapValues(lambda x: (x[1][1], 1))
+        .reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1]))
+        .mapValues(lambda x: x[0]/x[1])).toDF().toPandas()
 
 
 def graph_country(country_data):
@@ -97,6 +103,10 @@ def graph_country(country_data):
     plt.close(image)
 
 
+#def graph_choropleth(mean_by_country):
+
+
+
 def main():
     if sys.argv.__len__() < 3:
         print("Usage: Actor1(3 Char ISO code) InputPath OutputPath")
@@ -110,7 +120,7 @@ def main():
     clear_directory(sc, out_path)
 
     data = pull_data(sc, in_path, out_path)
-    graph_by_country(data, out_path)
+    generate_graphs(data, out_path)
 
 
 if __name__ == '__main__':
