@@ -66,7 +66,7 @@ def pull_data(sc, in_path, out_path):
 
 
 def graph_by_country(mean_data, out_path): 
-    country_data = (mean_data.map(lambda x: (x[0][0], (x[0][1], x[1])))
+    country_data = (mean_data.map(lambda x: (x[0][0], (int(x[0][1]), x[1])))
         .groupByKey()
         .collect())
 
