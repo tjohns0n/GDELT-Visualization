@@ -66,12 +66,14 @@ def graph_by_country(mean_data, out_path):
     country_data = (mean_data.map(lambda x: (x[0][0], (int(x[0][1]), x[1])))
         .groupByKey()
         .collect())
+
+    blank_image = plt.figure()
     for country in country_data:
-        graph_country(country)
+        graph_country(country, blank_image)
+        plt.clf()
 
 
-def graph_country(country_data):
-    image = plt.figure()
+def graph_country(country_data, image):
     line_graph = image.add_subplot(111)
     
     axes = zip(*sorted(list(country_data[1])))
