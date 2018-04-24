@@ -72,7 +72,7 @@ def generate_graphs(mean_data, out_path):
 
     country_data = world_data.groupByKey().collect()    
 
-    world_data = (world_data.mapValues(lambda x: (x[1][1], 1))
+    world_data = (world_data.mapValues(lambda x: (x[1], 1))
         .reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1]))
         .mapValues(lambda x: x[0]/x[1])).toDF().toPandas()
 
