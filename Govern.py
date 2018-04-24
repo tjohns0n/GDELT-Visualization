@@ -1,6 +1,9 @@
+from datetime import datetime
+
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext
 from pyspark.sql.functions import input_file_name 
@@ -77,12 +80,20 @@ def graph_country(country_data):
     
     axes = zip(*sorted(list(country_data[1])))
     
-    date = [x[:5] + "-" + x[5:8] + "-" + x[8:] for x in axes[0]]
+    first_day = axes[0][0]
+    last_day = axes[0][-1]
+    date = [x - first_day for x in axes[0]]
     mean_by_date = axes[1]
 
+    first_day = datetime.fromordinal(first_day).strftime('%Y-%m-%d')
+    last_day = datetime.fromordinal(last_day).strftime('%Y-%m-%d')
+
     line_graph.plot(date, mean_by_date)
+    line_graph.title(country_data[0] + " average tone, " + first_day)
+    line_graph.xlabel('Day')
+    line_graph.ylabel('Mean Tone')
     #TODO: move to HDFS
-    image.savefig(country_data[0] + '-' + date[0] + 'to' + date[-1] + '.png') 
+    image.savefig(country_data[0] + '-' + first_day + 'to' + last_day + '.png') 
     plt.close(image)
 
 
