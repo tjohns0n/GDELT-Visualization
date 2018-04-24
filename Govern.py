@@ -85,7 +85,7 @@ def graph_country(country_data):
     date = [x - first_day for x in axes[0]]
     mean_by_date = axes[1]
 
-    first_day = datetime.strptime(first_day, '%Y%m%d')).strftime('%Y-%m-%d')
+    first_day = datetime.strptime(first_day, '%Y%m%d').strftime('%Y-%m-%d')
     last_day = datetime.strptime(last_day, '%Y%m%d').strftime('%Y-%m-%d')
 
     line_graph.plot(date, mean_by_date)
