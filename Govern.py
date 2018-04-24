@@ -69,15 +69,16 @@ def pull_data(sc, in_path, out_path):
 
 def generate_graphs(mean_data, out_path): 
     country_data = (mean_data.map(lambda x: (x[0][0], (int(x[0][1]), x[1])))
-        .groupByKey()
-        .collect())
-
-    for country in country_data:
-        graph_country(country)
+        .groupByKey())
 
     world_data = (country_data.mapValues(lambda x: (x[1][1], 1))
         .reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1]))
         .mapValues(lambda x: x[0]/x[1])).toDF().toPandas()
+
+    local_country_data = country_data.collect()
+
+    for country in country_data:
+        graph_country(country)
 
     print(world_data)
 
