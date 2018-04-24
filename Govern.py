@@ -63,7 +63,7 @@ def pull_data(sc, in_path, out_path):
 
 
 def graph_by_country(mean_data, out_path): 
-    country_data = (mean_data.map(lambda x: (x[0][0], (int(x[0][1]), x[1])))
+    country_data = (mean_data.map(lambda x: (x[0][0], (x[0][1], x[1])))
         .groupByKey()
         .collect())
 
@@ -77,12 +77,12 @@ def graph_country(country_data):
     
     axes = zip(*sorted(list(country_data[1])))
     
-    date = axes[0]
+    date = [x[:5] + "-" + x[5:8] + "-" + x[8:] for x in axes[0]]
     mean_by_date = axes[1]
 
     line_graph.plot(date, mean_by_date)
     #TODO: move to HDFS
-    image.savefig(country_data[0] + '-' + str(date[0]) + '-' + str(date[-1]) + '.png') 
+    image.savefig(country_data[0] + '-' + date[0] + 'to' + date[-1] + '.png') 
     plt.close(image)
 
 
