@@ -79,7 +79,7 @@ def graph_country(country_data):
     date = axes[0]
     mean_by_date = axes[1]
 
-    ax.plot(date, mean_by_date)
+    line_graph.plot(date, mean_by_date)
     #TODO: move to HDFS
     image.savefig(country_data[0] + '-' + str(date[0]) + '-' + str(date[-1]) + '.png') 
     #fig.close()
