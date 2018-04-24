@@ -59,30 +59,29 @@ def pull_data(sc, in_path, out_path):
 
     sums = composite.reduceByKey(lambda x, y: (x[0]+y[0], x[1]+y[1]))
     means = sums.mapValues(lambda x: x[1]/x[0])
-    return means #means.saveAsTextFile(out_path)
+    return means
 
 
-def graph_by_country(sc, mean_data, out_path):    
-    axes = mean_data.map(lambda x: (x[0][0], (int(x[0][1]), x[1]))).groupByKey().collect()
-    for axis in axes:
-        graph_country(axis)
+def graph_by_country(mean_data, out_path): 
+    country_data = (mean_data.map(lambda x: (x[0][0], (int(x[0][1]), x[1])))
+        .groupByKey()
+        .collect())
+    for country in country_data:
+        graph_country(country)
 
 
 def graph_country(country_data):
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    image = plt.figure()
+    line_graph = image.add_subplot(111)
     
-    axes = list(country_data[1])
-    axes = sorted(axes)
+    axes = zip(*sorted(list(country_data[1])))
     
-    axes = zip(*axes)
-    x_axis = axes[0]
-    y_axis = axes[1]
+    date = axes[0]
+    mean_by_date = axes[1]
 
-    print(x_axis)
-
-    ax.plot(x_axis, y_axis)
-    fig.savefig(country_data[0] + '-' + str(x_axis[0]) + '-' + str(x_axis[-1]) + '.png') 
+    ax.plot(date, mean_by_date)
+    #TODO: move to HDFS
+    image.savefig(country_data[0] + '-' + str(date[0]) + '-' + str(date[-1]) + '.png') 
     #fig.close()
 
 
@@ -98,7 +97,7 @@ def main():
     clear_directory(sc, out_path)
 
     data = pull_data(sc, in_path, out_path)
-    graph_by_country(sc, data, out_path)
+    graph_by_country(data, out_path)
 
 
 if __name__ == '__main__':
