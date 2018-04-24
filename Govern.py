@@ -68,10 +68,10 @@ def graph_by_country(mean_data, out_path):
         .collect())
 
     for country in country_data:
-        graph_country(country, blank_image)
+        graph_country(country)
 
 
-def graph_country(country_data, image):
+def graph_country(country_data):
     image = plt.figure()    
     line_graph = image.add_subplot(111)
     
@@ -93,6 +93,7 @@ def main():
 
     conf = SparkConf().setAppName(APP_NAME)
     sc = SparkContext(conf=conf)
+    sc.setLogLevel("WARN")
     in_path = sys.argv[2]
     out_path = sys.argv[3]
     clear_directory(sc, out_path)
