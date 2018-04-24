@@ -79,6 +79,8 @@ def generate_graphs(mean_data, out_path):
         .reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1]))
         .mapValues(lambda x: x[0]/x[1])).toDF().toPandas()
 
+    print(world_data)
+
 
 def graph_country(country_data):
     image = plt.figure()    
