@@ -9,6 +9,8 @@ import geopandas
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext
 from pyspark.sql.functions import input_file_name 
+
+import os
 import sys
 
 APP_NAME = 'TEST'
@@ -76,6 +78,12 @@ def generate_graphs(mean_data, out_path):
     world_data = (world_data.mapValues(lambda x: (x[1], 1))
         .reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1]))
         .mapValues(lambda x: x[0]/x[1])).toDF().toPandas()
+
+    if not os.path.exists('./output'):
+        os.makedirs('./output')
+
+    if not os.path.exists('./output/by_country'):
+        os.makedirs('./output/by_country')
 
     for country in country_data:
         graph_country(country)
