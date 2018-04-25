@@ -102,13 +102,13 @@ def graph_country(country_data):
     first_day_str = datetime.strptime(str(first_day), '%Y%m%d').strftime('%Y-%m-%d')
     last_day_str = datetime.strptime(str(last_day), '%Y%m%d').strftime('%Y-%m-%d')
 
-    start_month = first_day / 100
+    converted_dates = map(datetime.datetime.strptime, axes[0], len(axes[0])*['%Y-%m-%d'])
+    x_axis = (converted_dates)    
 
-    date = [((x - first_day) % 100) + (31 * (x / 100 - start_month)) for x in axes[0]]
     mean_by_date = axes[1]
 
 
-    line_graph.plot(date, mean_by_date)
+    line_graph.plot(x_axis, mean_by_date)
     line_graph.set_title(country_data[0] + ' average tone, ' + first_day_str + ' to ' + last_day_str)
     line_graph.set_xlabel('Day')
     line_graph.set_ylabel('Mean Tone')
