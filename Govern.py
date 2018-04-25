@@ -121,7 +121,7 @@ def graph_choropleth(mean_by_country):
     
     num_colors = 11
     color_map = 'RdBu' # Red for negative numbers, blue for positive
-    title = 'USA relations with other countries'
+    title = '{} relations with other countries'.format(sys.argv[1])
 
     choropleth = (merged_data.dropna()
         .plot(column = '_2', cmap=color_map, figsize=(16,10), 
