@@ -1,4 +1,6 @@
 # CS 455 Term Project
+by Chris Westerman, Thomas Shaw, and Tanner Johnson 
+
 ## Better Governing with Data Science
 
 Our project analyzes the GDELT event dataset to provide visualizations depicting any country's relationship with every other country in the world over a given time frame. 
