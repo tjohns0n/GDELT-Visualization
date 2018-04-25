@@ -109,7 +109,20 @@ def graph_choropleth(mean_by_country):
     map_file = './country_map/countries.shp'
     country_map = geopandas.read_file(map_file)[['ADM0_A3', 'geometry']].to_crs('+proj=robin')
     merged_data = country_map.merge(mean_by_country, left_on='ADM0_A3', right_on='_1')
-    print(merged_data)
+    
+    num_colors = 21
+    color_map = 'RdBu' # Red for negative numbers, blue for positive
+    title = 'USA relations with other countries'
+
+    choropleth = (merged_data.dropna()
+        .plot(column = '_2', cmap=color_map, figsize=(16,10), 
+        scheme='equal_interval', k=num_colors, legend=True))
+
+    choropleth.set_axis_off()
+    choropleth.set_xlim([-1.5e7, 1.7e7])
+    choropleth.get_legend().set_bbox_to_anchor((.12, .4))
+    fig = choropleth.get_figure()
+    fig.savefig('hello.png')
 
 
 def main():
