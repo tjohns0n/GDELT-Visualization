@@ -64,6 +64,7 @@ def pull_data(sc, in_path, out_path):
 
     sums = composite.reduceByKey(lambda x, y: (x[0]+y[0], x[1]+y[1]))
     means = sums.mapValues(lambda x: x[1]/x[0])
+    means.saveAsTextFile(out_path)
     return means
 
 
@@ -100,8 +101,8 @@ def graph_country(country_data):
     line_graph.set_title(country_data[0] + ' average tone, ' + first_day + ' to ' + last_day)
     line_graph.set_xlabel('Day')
     line_graph.set_ylabel('Mean Tone')
-    #TODO: move to HDFS
-    image.savefig(country_data[0] + '-' + first_day + 'to' + last_day + '.png') 
+    
+    image.savefig('./output/by_country/country_data[0] + '-' + first_day + 'to' + last_day + '.png') 
     plt.close(image)
 
 
@@ -110,7 +111,7 @@ def graph_choropleth(mean_by_country):
     country_map = geopandas.read_file(map_file)[['ADM0_A3', 'geometry']].to_crs('+proj=robin')
     merged_data = country_map.merge(mean_by_country, left_on='ADM0_A3', right_on='_1')
     
-    num_colors = 21
+    num_colors = 11
     color_map = 'RdBu' # Red for negative numbers, blue for positive
     title = 'USA relations with other countries'
 
@@ -118,11 +119,12 @@ def graph_choropleth(mean_by_country):
         .plot(column = '_2', cmap=color_map, figsize=(16,10), 
         scheme='equal_interval', k=num_colors, legend=True))
 
+    choropleth.set_title(title, fontdict={'fontsize': 20})
     choropleth.set_axis_off()
     choropleth.set_xlim([-1.5e7, 1.7e7])
-    choropleth.get_legend().set_bbox_to_anchor((.12, .4))
+    choropleth.get_legend().set_bbox_to_anchor((.12, .1))
     fig = choropleth.get_figure()
-    fig.savefig('hello.png')
+    fig.savefig('./output/current_relations.png')
 
 
 def main():
