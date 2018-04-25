@@ -102,7 +102,7 @@ def graph_country(country_data):
     line_graph.set_xlabel('Day')
     line_graph.set_ylabel('Mean Tone')
     
-    image.savefig('./output/by_country/country_data[0] + '-' + first_day + 'to' + last_day + '.png') 
+    image.savefig('./output/by_country/country_data[0]' + '-' + first_day + 'to' + last_day + '.png') 
     plt.close(image)
 
 
