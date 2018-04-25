@@ -103,7 +103,7 @@ def graph_country(country_data):
     last_day_str = datetime.strptime(str(last_day), '%Y%m%d').strftime('%Y-%m-%d')
 
     axes[0] = [str(x) for x in axes[0]]
-    converted_dates = map(datetime.strptime, axes[0], len(axes[0])*['%Y-%m-%d'])
+    converted_dates = map(datetime.strptime, axes[0], len(axes[0])*['%Y%m%d'])
     x_axis = (converted_dates)    
 
     mean_by_date = axes[1]
