@@ -99,18 +99,21 @@ def graph_country(country_data):
     
     first_day = axes[0][0]
     last_day = axes[0][-1]
-    date = [x - first_day for x in axes[0]]
+    first_day_str = datetime.strptime(str(first_day), '%Y%m%d').strftime('%Y-%m-%d')
+    last_day_str = datetime.strptime(str(last_day), '%Y%m%d').strftime('%Y-%m-%d')
+
+    start_month = first_day / 100
+
+    date = [((x - first_day) % 100) + (31 * (x / 100 - start_month)) for x in axes[0]]
     mean_by_date = axes[1]
 
-    first_day = datetime.strptime(str(first_day), '%Y%m%d').strftime('%Y-%m-%d')
-    last_day = datetime.strptime(str(last_day), '%Y%m%d').strftime('%Y-%m-%d')
 
     line_graph.plot(date, mean_by_date)
-    line_graph.set_title(country_data[0] + ' average tone, ' + first_day + ' to ' + last_day)
+    line_graph.set_title(country_data[0] + ' average tone, ' + first_day_str + ' to ' + last_day_str)
     line_graph.set_xlabel('Day')
     line_graph.set_ylabel('Mean Tone')
     
-    image.savefig('./output/by_country/' + country_data[0] + '-' + first_day + 'to' + last_day + '.png') 
+    image.savefig('./output/by_country/' + country_data[0] + '-' + first_day_str + 'to' + last_day_str + '.png') 
     plt.close(image)
 
 
