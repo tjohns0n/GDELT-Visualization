@@ -125,7 +125,7 @@ def graph_choropleth(mean_by_country):
 
     choropleth = (merged_data.dropna()
         .plot(column = '_2', cmap=color_map, figsize=(16,10), 
-        scheme='equal_interval', k=num_colors, legend=True, vmin=0., vmax=10.))
+        scheme='equal_interval', k=num_colors, legend=True, vmin=-10., vmax=10.))
 
     choropleth.set_title(title, fontdict={'fontsize': 20})
     choropleth.set_axis_off()
